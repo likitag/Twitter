@@ -1,22 +1,50 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
+import org.w3c.dom.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Parcel
 public class Tweet {
     public String body;
     public String createdAt;
     public User user;
+    public String tweet_URL;
+    //public String entities;
+
+    //empty constructor needed by the Parceler library
+    public Tweet(){
+
+    }
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
-        tweet.body = jsonObject.getString("text");
+        if(jsonObject.has("full_text")) {
+            tweet.body = jsonObject.getString("full_text");
+        } else {
+            tweet.body = jsonObject.getString("text");
+        }
+
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
+
+        if(!jsonObject.getJSONObject("entities").has("media")){
+            Log.d("TWEET", "No pic");
+            tweet.tweet_URL = "none";
+        }
+        else{
+            Log.d("TWEET has pic", jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("media_url"));
+            tweet.tweet_URL = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("media_url");
+        }
+
+
         return tweet;
 
     }
