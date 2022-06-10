@@ -35,6 +35,9 @@ public class TimelineActivity extends AppCompatActivity {
     List<Tweet> tweets;
     TweetsAdapter adapter;
     Button logOut;
+    long lowest_max_id;
+    private EndlessRecyclerViewScrollListener scrollListener;
+
     public static final String TAG = "TimelineActivity";
     private final int REQUEST_CODE = 20;
     @Override
@@ -65,10 +68,28 @@ public class TimelineActivity extends AppCompatActivity {
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
 
+
+
         //recycler view setup: layout manager and adapter
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
         rvTweets.setAdapter(adapter);
+        RecyclerView rvItems = (RecyclerView) findViewById(R.id.rvTweets);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvItems.setLayoutManager(linearLayoutManager);
+
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                lowest_max_id = tweets.get(tweets.size() - 1).id;
+                populateOldTimeline(lowest_max_id);
+                Log.i("reached bottom", "onLoadMore: ");
+
+            }
+        };
         populateHomeTimeline();
+        rvItems.addOnScrollListener(scrollListener);
 
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +102,10 @@ public class TimelineActivity extends AppCompatActivity {
         });
 
     }
+
+    // Append the next page of data into the adapter
+    // This method probably sends out a network request and appends new data items to your adapter.
+
 
     public void fetchTimelineAsync(int page) {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
@@ -144,6 +169,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void populateHomeTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
+            //ComposeActivity.showProgressBar();
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 Log.i(TAG, "onSuccess! " +json.toString());
@@ -166,6 +192,33 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void populateOldTimeline(long max_id) {
+        client.getOlderTweets(max_id, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Log.i(TAG, "onSuccess! " +json.toString());
+                JSONArray jsonArray = json.jsonArray;
+                try {
+                    tweets.addAll(Tweet.fromJsonArray(jsonArray));
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    Log.e(TAG, "Json exception");
+                    e.printStackTrace();
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(TAG, "onFailure! " + response, throwable);
+
+            }
+        });
+    }
+
+
 
     private void onLogoutButton() {
         // forget who's logged in

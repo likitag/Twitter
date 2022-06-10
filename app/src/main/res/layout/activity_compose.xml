@@ -31,7 +31,7 @@
         android:text="@string/tweet" />
 
     <TextView
-        android:id="@+id/tvCharacterCount"
+        android:id="@+id/tvCharacterCountResponse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/etCompose"
@@ -41,4 +41,11 @@
         android:layout_toStartOf="@+id/btnTweet"
         android:layout_toLeftOf="@id/btnTweet"
         android:text="280" />
+
+    <TextView
+        android:id="@+id/tvReply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etCompose"
+        android:text="TextView" />
 </RelativeLayout>
