@@ -82,7 +82,7 @@ public class TimelineActivity extends AppCompatActivity {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                lowest_max_id = tweets.get(tweets.size() - 1).id;
+                lowest_max_id = tweets.get(tweets.size()-1).id;
                 populateOldTimeline(lowest_max_id);
                 Log.i("reached bottom", "onLoadMore: ");
 
