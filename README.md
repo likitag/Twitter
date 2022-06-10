@@ -48,8 +48,7 @@ The following **additional** features are implemented:
 Here's a walkthrough of implemented user stories:
 
 
-<img src='
-https://github.com/likitag/Twitter/blob/master/twitter_walkthrough_.gif' title='Flixster Walkthrough' width='250' alt='Twitter Walkthrough' />
+<img src='https://github.com/likitag/Twitter/blob/master/twitter_walkthrough_.gif' title='Twitter Walkthrough' width='250' alt='Twitter Walkthrough' />
 
 
 GIF created with [Kap](https://getkap.co/).
